@@ -1,0 +1,12 @@
+{
+  "name": "installation-readiness-report",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Turns order/status-update JSON into an installation readiness report",
+  "main": "report.js",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node report.js input.json",
+    "test": "node --test"
+  }
+}

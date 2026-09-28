@@ -1,0 +1,10 @@
+{
+  "orders": [],
+  "summary": {
+    "total_orders": 0,
+    "ready": 0,
+    "blocked": 0
+  },
+  "duplicate_updates": 0,
+  "rejected_updates": []
+}

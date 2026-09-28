@@ -1,0 +1,54 @@
+{
+  "orders": [
+    {
+      "order_id": "ARK-101",
+      "city": "Bengaluru",
+      "status": "ready",
+      "completed_tasks": 3,
+      "pending_tasks": []
+    },
+    {
+      "order_id": "ARK-102",
+      "city": "Pune",
+      "status": "blocked",
+      "completed_tasks": 1,
+      "pending_tasks": [
+        "site_survey",
+        "materials"
+      ]
+    },
+    {
+      "order_id": "ARK-103",
+      "city": "Jaipur",
+      "status": "blocked",
+      "completed_tasks": 1,
+      "pending_tasks": [
+        "site_survey",
+        "materials"
+      ]
+    }
+  ],
+  "summary": {
+    "total_orders": 3,
+    "ready": 1,
+    "blocked": 2
+  },
+  "duplicate_updates": 1,
+  "rejected_updates": [
+    {
+      "index": 8,
+      "event_id": "e8",
+      "reason": "unknown_order"
+    },
+    {
+      "index": 9,
+      "event_id": "e9",
+      "reason": "unknown_task"
+    },
+    {
+      "index": 10,
+      "event_id": "e10",
+      "reason": "invalid_update"
+    }
+  ]
+}
