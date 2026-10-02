@@ -56,10 +56,12 @@ function compareAscii(a, b){
     return 0;
 }
 
-function buildReport(data){
+function buildReport(data, city){
     const orderIdMap = new Map();
     for(const order of data.orders){
-        orderIdMap.set(order.order_id,order);
+        if(order.city==city){
+            orderIdMap.set(order.order_id,order);
+        }
     }
 
     const taskStatusMap = new Map();
@@ -72,28 +74,30 @@ function buildReport(data){
     let duplicateUpdates = 0;
 
     data.updates.forEach((update, index)=>{
-        const reason = rejectionReason(update, orderIdMap);
-        if(reason !== null){
-            const eventId = (isPlainObject(update) && isNonEmptyString(update.event_id)) ? update.event_id : null;
-            rejectedUpdates.push({index, event_id:eventId, reason});
-            return;
-        }
-        if(seenEventIds.has(update.event_id)){
-            duplicateUpdates +=1;
-            return;
-        }
+            if(orderIdMap.has(update.order_id) && orderIdMap.get(update.order_id).value == city ){
+                const reason = rejectionReason(update, orderIdMap);
+            if(reason !== null){
+                const eventId = (isPlainObject(update) && isNonEmptyString(update.event_id)) ? update.event_id : null;
+                rejectedUpdates.push({index, event_id:eventId, reason});
+                return;
+            }
+            if(seenEventIds.has(update.event_id)){
+                duplicateUpdates +=1;
+                return;
+            }
 
-        seenEventIds.add(update.event_id);
+            seenEventIds.add(update.event_id);
 
-        const tasks = taskStatusMap.get(update.order_id);
-        const current = tasks.get(update.task);
-        if(current === undefined || update.revision > current.revision){
-            tasks.set(update.task, {revision: update.revision,status: update.status});
+            const tasks = taskStatusMap.get(update.order_id);
+            const current = tasks.get(update.task);
+            if(current === undefined || update.revision > current.revision){
+                tasks.set(update.task, {revision: update.revision,status: update.status});
+            }
         }
     });
 
     const orders = [...orderIdMap.values()]
-        .sort((a,b)=> compareAscii(a.order_id, b.order_id))
+        .sort((a,b)=> compareAscii(a.order_id, b.order_id)) // nlog(n)
         .map((order)=>{
             const tasks= taskStatusMap.get(order.order_id);
             const pendingTasks = enumTasks.filter((task)=> tasks.get(task)?.status !== "done" );
@@ -123,7 +127,7 @@ if(require.main === module){
     }
 
     const data = JSON.parse(fs.readFileSync(process.argv[2],'utf8'));
-    process.stdout.write(JSON.stringify(buildReport(data),null,2)+'\n');
+    process.stdout.write(JSON.stringify(buildReport(data,"Pune"),null,2)+'\n');
 }
 
 module.exports = {buildReport}
